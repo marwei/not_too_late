@@ -44,6 +44,7 @@ if ARGV[0] == "git"
   time_travel = NotTooLate::Command.get_time_travel
   git_command = ARGV.join(' ')
   NotTooLate.run time_travel, git_command
+  exit
 end
 
 opt_parser.parse!
