@@ -42,8 +42,16 @@ end
 #        following code was put after the opt_parser.parse!
 if ARGV[0] == "git"
   time_travel = NotTooLate::Command.get_time_travel
-  git_command = ARGV.join(' ')
+  git_command = ' '
+  ARGV.each do |arg|
+    if arg.split.size > 1
+      git_command += "'#{arg}' "
+    else
+      git_command += "#{arg} "
+    end
+  end
   system git_command
+
   # NotTooLate.run time_travel, git_command
   exit
 end
