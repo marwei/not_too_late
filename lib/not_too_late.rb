@@ -6,6 +6,7 @@ module NotTooLate
   class << self
     def run(time_travel, git_command)
       set_sys_time_to(Date.today - time_travel)
+      puts "running #{git_command}"
       system git_command
       system "sudo ntpdate -u time.apple.com"
     end
