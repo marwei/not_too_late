@@ -25,8 +25,12 @@ opt_parser = OptionParser.new do |opt|
   opt.on "-b", "--backward number_of_days", Numeric, "roll backward the current setting by specified number of days" do |arg|
     time_travel = NotTooLate::Command.get_time_travel + arg
   end
-  opt.on "-g", "--go date (mm-dd-yyyy)", "set or change current date setting to the specified date." do |arg|
-    time_travel = (Date.today - Date.strptime(arg, '%d-%m-%y')).to_i
+  opt.on "-g", "--go date (mm-dd-yy)", "set or change current date setting to the specified date." do |arg|
+    time_travel = (Date.today - Date.strptime(arg, '%m-%d-%y')).to_i
+    if time_travel < 0
+      puts opt_parser
+      exit
+    end
   end
   opt.on "-h", "--help", "help" do
     puts opt_parser
@@ -42,7 +46,6 @@ when "config"
   if time_travel.nil?
     puts "Invalid option"
   else
-
     NotTooLate::Command.set_time_travel time_travel
   end
 when "git"
