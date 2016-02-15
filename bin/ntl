@@ -37,6 +37,15 @@ opt_parser = OptionParser.new do |opt|
   end
 end
 
+# FIXME: this is a workaround to avoid git commands' flags being parsed here
+#        e.g. ntl git commit -am "initial commit" will exit with error if the
+#        following code was put after the opt_parser.parse!
+if ARGV[0] == "git"
+  time_travel = NotTooLate::Command.get_time_travel
+  git_command = ARGV.join(' ')
+  NotTooLate.run time_travel, git_command
+end
+
 opt_parser.parse!
 
 case ARGV[0]
@@ -48,10 +57,6 @@ when "config"
   else
     NotTooLate::Command.set_time_travel time_travel
   end
-when "git"
-  time_travel = NotTooLate::Command.get_time_travel
-  git_command = ARGV.join(' ')
-  NotTooLate.run time_travel, git_command
 else
   puts opt_parser
 end

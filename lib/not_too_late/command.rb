@@ -14,7 +14,7 @@ module NotTooLate
       def set_time_travel(new_time)
         config = Config.read
 
-        if new_time > config['time_travel']
+        if config['time_travel'] != 0 && new_time > config['time_travel']
           puts "You are traveling back in time again, "\
                "this might cause unexpected results to your git history. "\
                "Are you sure? (Press 'Y' to proceed, or any other key to abort"
