@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require File.join(File.dirname(__FILE__), "../lib/not_too_late")
+
+time_travel = nil
+
+opt_parser = OptionParser.new do |opt|  
+  opt.banner = "Usage: ntl command [options]"
+  opt.separator ""
+  opt.separator "    init: initialize git repo and create configuration file"
+  opt.separator "    config: configure time travel settings. [-sfbg]"
+  opt.separator "    git command: run git command with current time travel settings"
+  opt.separator ""
+  opt.separator "Options:"
+
+  opt.on "-s", "--set number_of_days", Numeric, "set how many days earlier the git actions will be made" do |arg|
+    time_travel = arg
+  end
+
+  opt.on "-f", "--forward number_of_days", Numeric, "fast forward the current setting by specified number of days" do |arg|
+    time_travel = NotTooLate::Command.get_time_travel - arg
+  end
+
+  opt.on "-b", "--backward number_of_days", Numeric, "roll backward the current setting by specified number of days" do |arg|
+    time_travel = NotTooLate::Command.get_time_travel + arg
+  end
+  opt.on "-g", "--go date (mm-dd-yyyy)", "set or change current date setting to the specified date." do |arg|
+    time_travel = (Date.today - Date.strptime(arg, '%d-%m-%y')).to_i
+  end
+  opt.on "-h", "--help", "help" do
+    puts opt_parser
+  end
+end
+
+opt_parser.parse!
+
+case ARGV[0]
+when "init"
+  NotTooLate::Command.init_config
+when "config"
+  if time_travel.nil?
+    puts "Invalid option"
+  else
+
+    NotTooLate::Command.set_time_travel time_travel
+  end
+when "git"
+  time_travel = NotTooLate::Command.get_time_travel
+  git_command = ARGV.join(' ')
+  NotTooLate.run time_travel, git_command
+else
+  puts opt_parser
+end
